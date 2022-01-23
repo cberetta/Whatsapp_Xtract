@@ -1,12 +1,24 @@
 WhatsApp_Xtract
 ===============
 
-## I'm not the author of this work!
-## All credits go to the authors below
+### I'm not the author of this work!
+### All credits go to the authors below
 
 I downloaded this work from: https://forum.xda-developers.com/t/tool-whatsapp-xtract-backup-messages-extractor-database-analyzer-chat-backup.1583021/ and, as suggested in the forum, made this repo for my use.
 
-_I renamed !README.txt to README.md to be compliant with Github_
+_I renamed !README.txt to README.md to be used with Github_
+
+------------------------
+
+My CHANGELOG:
+_From the original version 2.3 of Apr 25, 2018 ..._
+
+v2.3.1
+- (iPhone) removed **BPlistReader** _(it was crashing with my ChatStorage.sqlite)_
+- (iPhone) added **plistlib** in substitution of BPlistReader
+- (iPhone) added code for missing ZTHUMBNAILDATA column in my ChatStorage.sqlite that was crashing the script
+
+_(below this line you can find the original README content)_
 
 ------------------------
 

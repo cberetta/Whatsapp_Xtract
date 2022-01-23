@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 '''
 WhatsApp Xtract v2.2
 - WhatsApp Backup Messages Extractor for Android and iPhone
@@ -10,6 +10,10 @@ Tested with Whatsapp (Android) 2.8.5732
 Tested with Whatsapp (iPhone)  2.5.1
 
 Changelog:
+
+v2.3 (updated by ztedd - Apr 25, 2018)
+- fixed image preview to work with new Whatsapp database format
+- some minor fixes
 
 v2.2 (updated by Martina Weidner - Nov 17, 2012)
 - now supports new emoji smileys
@@ -49,7 +53,7 @@ V1.1 (updated by Martina Weidner - Apr 5, 2012)
 V1.0 (created by Fabio Sangiacomo - Dec 10, 2011)
 - first release, iPhone only:
   it takes in input the file "ChatStorage.sqlite",
-  extracts chat sessions and the bare text 
+  extracts chat sessions and the bare text
 - sortable js allows table sorting to make chat sessions easily readable
 
 Usage:
@@ -106,25 +110,25 @@ class Chatsession:
             self.pk_cs = -1
         else:
             self.pk_cs = pkcs
-            
+
         # contact nick
         if contactname == "" or contactname is None:
             self.contact_name = "N/A"
         else:
             self.contact_name = contactname
-            
+
         # contact id
         if contactid == "" or contactid is None:
             self.contact_id = "N/A"
         else:
             self.contact_id = contactid
-            
+
         # contact msg counter
         if contactmsgcount == "" or contactmsgcount is None:
             self.contact_msg_count = "N/A"
         else:
             self.contact_msg_count = contactmsgcount
-            
+
         # contact unread msg
         if contactunread == "" or contactunread is None:
             self.contact_unread_msg = "N/A"
@@ -136,7 +140,7 @@ class Chatsession:
             self.contact_status = "N/A"
         else:
             self.contact_status = contactstatus
-            
+
         # contact last message date
         if lastmessagedate == "" or lastmessagedate is None or lastmessagedate == 0:
             self.last_message_date = " N/A" #space is necessary for that the empty chats are placed at the end on sorting
@@ -186,13 +190,13 @@ class Message:
             self.keyid = None
         else:
             self.key_id = keyid
-            
+
         # "from me" flag
         if fromme == "" or fromme is None:
             self.from_me = -1
         else:
             self.from_me = fromme
-            
+
         # message timestamp
         if msgdate == "" or msgdate is None or msgdate == 0:
             self.msg_date = "N/A"
@@ -222,16 +226,16 @@ class Message:
             self.contact_from = "N/A"
         else:
             self.contact_from = contactfrom
-            
+
         # media
         if localurl == "" or localurl is None:
             self.local_url = ""
         else:
-            self.local_url = localurl  
+            self.local_url = localurl
         if mediaurl == "" or mediaurl is None:
             self.media_url = ""
         else:
-            self.media_url = mediaurl            
+            self.media_url = mediaurl
         if mediathumb == "" or mediathumb is None:
             self.media_thumb = ""
         else:
@@ -243,18 +247,18 @@ class Message:
         if mediawatype == "" or mediawatype is None:
             self.media_wa_type = ""
         else:
-            self.media_wa_type = mediawatype            
+            self.media_wa_type = mediawatype
         if mediasize == "" or mediasize is None:
             self.media_size = ""
         else:
             self.media_size = mediasize
-        
+
         #status
         if msgstatus == "" or msgstatus is None:
             self.status = "N/A"
         else:
             self.status = msgstatus
-        
+
         #GPS
         if latitude == "" or latitude is None:
             self.latitude = ""
@@ -264,7 +268,7 @@ class Message:
             self.longitude = ""
         else:
             self.longitude = longitude
-        
+
         #VCARD
         if vcardname == "" or vcardname is None:
             self.vcard_name = ""
@@ -280,12 +284,12 @@ class Message:
         if self.pk_msg == other.pk_msg:
                 return 0
         return 1
-    
+
 ################################################################################
 # Smileys conversion function
 def convertsmileys_python3 (text):
     newtext = str(text)
-    
+
     # new emojis
     newtext = newtext.replace('\U0001F0CF', '<img src="data/emoji_new/1F0CF.png" alt=""/>')
     newtext = newtext.replace('\U0001F191', '<img src="data/emoji_new/1F191.png" alt=""/>')
@@ -662,7 +666,7 @@ def convertsmileys_python3 (text):
     newtext = newtext.replace('\u2B1B', '<img src="data/emoji_new/2B1B.png" alt=""/>')
     newtext = newtext.replace('\u2B1C', '<img src="data/emoji_new/2B1C.png" alt=""/>')
     newtext = newtext.replace('\u3030', '<img src="data/emoji_new/3030.png" alt=""/>')
-    
+
     # old emojis
     newtext = newtext.replace('\ue415', '<img src="data/emoji/e415.png" alt=""/>')
     newtext = newtext.replace('\ue056', '<img src="data/emoji/e056.png" alt=""/>')
@@ -1261,7 +1265,7 @@ def findfile (type, size, localurl, date, additionaldays):
                 try:
                     fname = flist [0] [ flist[1].index(size) ]
                 except:
-                    fname = ''          
+                    fname = ''
                 if fname == '':
                     if z >= 1 + additionaldays:
                         #if file is not found for "today", then try for "tomorrow" and "the day after tomorrow". If it's still not found, then try to find the temporary file, if not successful then just link the media folder
@@ -1287,7 +1291,7 @@ def findfile (type, size, localurl, date, additionaldays):
     #return the file name
     return fname
 
-  
+
 ################################################################################
 ################################################################################
 # MAIN
@@ -1299,11 +1303,11 @@ def main(argv):
 
     # parser options
     parser = ArgumentParser(description='Converts a Whatsapp database to HTML.')
-    parser.add_argument(dest='infile', 
+    parser.add_argument(dest='infile',
                        help="input 'msgstore.db' or 'msgstore.db.crypt' (Android) or 'ChatStorage.sqlite' (iPhone) file to scan")
-    parser.add_argument('-w', '--wafile', dest='wafile', 
+    parser.add_argument('-w', '--wafile', dest='wafile',
                        help="optionally input 'wa.db' (Android) file to scan")
-    parser.add_argument('-o', '--outfile',  dest='outfile', 
+    parser.add_argument('-o', '--outfile',  dest='outfile',
                        help="optionally choose name of output file")
     options = parser.parse_args()
 
@@ -1329,7 +1333,7 @@ def main(argv):
     msgstore.row_factory = sqlite3.Row
     c1 = msgstore.cursor()
     c2 = msgstore.cursor()
-    
+
     # check on platform
     try:
         c1.execute("SELECT * FROM ZWACHATSESSION")
@@ -1340,7 +1344,7 @@ def main(argv):
         # if failed --> ANDROID mode
         mode = ANDROID
         print ("Android mode!\n")
-   
+
     if mode == ANDROID:
         if have_wa:
             wastore = sqlite3.connect(options.wafile)
@@ -1366,17 +1370,17 @@ def main(argv):
                     os.remove("Temp.sql")
                 msgstore = sqlite3.connect(repairedfile)
                 msgstore.row_factory = sqlite3.Row
-                c1 = msgstore.cursor()          
-                c2 = msgstore.cursor() 
+                c1 = msgstore.cursor()
+                c2 = msgstore.cursor()
                 c1.execute("SELECT * FROM chat_list")
-            except sqlite3.Error as msg:             
+            except sqlite3.Error as msg:
                 try:
                     print ("trying to decrypt android database...")
                     c1.close()
                     c2.close()
                     msgstore.close()
                     if os.path.exists(repairedfile):
-                        os.remove(repairedfile) 
+                        os.remove(repairedfile)
                     from Crypto.Cipher import AES
                     code = "346a23652a46392b4d73257c67317e352e3372482177652c"
                     if PYTHON_VERSION == 2:
@@ -1392,8 +1396,8 @@ def main(argv):
                     #print ("size:" + str(len (decoded)) )
                     msgstore = sqlite3.connect(decodedfile)
                     msgstore.row_factory = sqlite3.Row
-                    c1 = msgstore.cursor()          
-                    c2 = msgstore.cursor()   
+                    c1 = msgstore.cursor()
+                    c2 = msgstore.cursor()
                     print ("decrypted database written to "+decodedfile)
                     c1.execute("SELECT * FROM chat_list")
                 except sqlite3.Error as msg:
@@ -1412,8 +1416,8 @@ def main(argv):
                                 os.remove("Temp.sql")
                             msgstore = sqlite3.connect(repairedfile)
                             msgstore.row_factory = sqlite3.Row
-                            c1 = msgstore.cursor()          
-                            c2 = msgstore.cursor() 
+                            c1 = msgstore.cursor()
+                            c2 = msgstore.cursor()
                             c1.execute("SELECT * FROM chat_list")
                     except sqlite3.Error as msg:
                         print("Could not open database file. Guess it's not a valid Android or Iphone database file. ")
@@ -1432,9 +1436,9 @@ def main(argv):
                     print('Error during decrypting: {}'.format(msg))
                     print("Could not decrypt database file. Guess it's not a valid Android/Iphone database file or Whatsapp changed the encryption.")
                     sys.exit(1)
-                          
+
     # gets metadata plist info (iphone only)
-    if mode == IPHONE:            
+    if mode == IPHONE:
         try:
             # ------------------------------------------------------ #
             #  IPHONE  ChatStorage.sqlite file *** Z_METADATA TABLE  #
@@ -1442,14 +1446,16 @@ def main(argv):
             # Z_VERSION INTEGER PRIMARY KEY
             # Z_UIID VARCHAR
             # Z_PLIST BLOB
-            from bplist import BPlistReader
+#cb            from bplist import BPlistReader
+            import plistlib
             c1.execute("SELECT * FROM Z_METADATA")
             metadata = c1.fetchone()
             print ("*** METADATA PLIST DUMP ***\n")
             print ("Plist ver.:  {}".format(metadata["Z_VERSION"]))
             print ("UUID:        {}".format(metadata["Z_UUID"]))
-            bpReader = BPlistReader(metadata["Z_PLIST"])
-            plist = bpReader.parse()
+#cb            bpReader = BPlistReader(metadata["Z_PLIST"])
+#cb            plist = bpReader.parse()
+            plist = plistlib.loads(metadata["Z_PLIST"])
 
             for entry in plist.items():
                 if entry[0] == "NSStoreModelVersionHashes":
@@ -1459,7 +1465,7 @@ def main(argv):
                 else:
                     print ("{}: {}".format(entry[0],entry[1]))
             print ("\n***************************\n")
-            
+
         except:
             print ("Metadata Plist Dump is failed. Note that you need to use Python 2.7 for that bplist.py works")
 
@@ -1487,7 +1493,7 @@ def main(argv):
                     try:
                         c2.execute("SELECT message_table_id FROM chat_list WHERE key_remote_jid=?", [chats["jid"]])
                         lastmessage = c2.fetchone()[0]
-                        #!todo alternativ maximale _id WHERE key_remote_jid 
+                        #!todo alternativ maximale _id WHERE key_remote_jid
                         c2.execute("SELECT timestamp FROM messages WHERE _id=?", [lastmessage])
                         lastmessagedate = c2.fetchone()[0]
                     except: #not all contacts that are whatsapp users may already have been chatted with
@@ -1505,13 +1511,13 @@ def main(argv):
                     # chats[2] --> message_table_id (id of last message in this chat, corresponds to table messages primary key)
                     name = chats["key_remote_jid"].split('@')[0]
                     try:
-                        lastmessage = chats["message_table_id"] 
+                        lastmessage = chats["message_table_id"]
                         c2.execute("SELECT timestamp FROM messages WHERE _id=?", [lastmessage])
                         lastmessagedate = c2.fetchone()[0]
                     except:
                         lastmessagedate = None
                     curr_chat = Chatsession(chats["_id"],name,chats["key_remote_jid"],None,None,None,lastmessagedate)
-                    chat_session_list.append(curr_chat)  
+                    chat_session_list.append(curr_chat)
             #now retrieve thumbnail database
             try:
                 thumbsDict = {}
@@ -1562,7 +1568,7 @@ def main(argv):
                 curr_chat = Chatsession(chats["Z_PK"],chats["ZPARTNERNAME"],chats["ZCONTACTJID"],chats["ZMESSAGECOUNTER"],chats["ZUNREADCOUNT"],statustext,chats["ZLASTMESSAGEDATE"])
                 chat_session_list.append(curr_chat)
         chat_session_list = sorted(chat_session_list, key=lambda Chatsession: Chatsession.last_message_date, reverse=True)
-                
+
 
     except sqlite3.Error as msg:
         print('Error: {}'.format(msg))
@@ -1643,6 +1649,8 @@ def main(argv):
                         # msgs[11] -> ZTOJID
                         # msgs[12] -> ZFROMJID
                         # msgs[13] -> ZSTANZAID
+#cb                        for k in msgs.keys():
+#cb                            print("msgs-> {}".format(k))
                         if msgs["ZISFROMME"] == 1:
                             contactfrom = "me"
                         else:
@@ -1689,27 +1697,37 @@ def main(argv):
                                     ZXMPPTHUMBPATH = media["ZXMPPTHUMBPATH"]
                                 except:
                                     ZXMPPTHUMBPATH = None
-                                curr_message = Message(msgs["Z_PK"],msgs["ZISFROMME"],None,msgs["ZMESSAGEDATE"],msgs["ZTEXT"],contactfrom,msgs["ZMESSAGESTATUS"],media["ZMEDIALOCALPATH"],media["ZMEDIAURL"],media["ZTHUMBNAILDATA"],ZXMPPTHUMBPATH,mediawatype,media["ZFILESIZE"],media["ZLATITUDE"],media["ZLONGITUDE"],media["ZVCARDNAME"],media["ZVCARDSTRING"])
+                                # Costantino Beretta, Jan.2022:
+                                #   in my ChatStorage.sqlite ZTHUMBNAILDATA does not
+                                #   exists, so I added code to manage this case
+                                try:
+                                    ZTHUMBNAILDATA  = media["ZTHUMBNAILDATA"]
+                                except:
+                                    ZTHUMBNAILDATA = None
+#cb                                for k in media.keys():
+#cb                                    print("media-> {}".format(k))
+#cb original                    curr_message = Message(msgs["Z_PK"],msgs["ZISFROMME"],None,msgs["ZMESSAGEDATE"],msgs["ZTEXT"],contactfrom,msgs["ZMESSAGESTATUS"],media["ZMEDIALOCALPATH"],media["ZMEDIAURL"],media["ZTHUMBNAILDATA"],ZXMPPTHUMBPATH,mediawatype,media["ZFILESIZE"],media["ZLATITUDE"],media["ZLONGITUDE"],media["ZVCARDNAME"],media["ZVCARDSTRING"])
+                                curr_message = Message(msgs["Z_PK"],msgs["ZISFROMME"],None,msgs["ZMESSAGEDATE"],msgs["ZTEXT"],contactfrom,msgs["ZMESSAGESTATUS"],media["ZMEDIALOCALPATH"],media["ZMEDIAURL"],ZTHUMBNAILDATA         ,ZXMPPTHUMBPATH,mediawatype,media["ZFILESIZE"],media["ZLATITUDE"],media["ZLONGITUDE"],media["ZVCARDNAME"],media["ZVCARDSTRING"])
                             except TypeError as msg:
-                                print('Error TypeError while reading media message #{} in chat #{}: {}'.format(count_messages, chats.pk_cs, msg) + "\nI guess this means that the media part of this message can't be found in the DB") 
+                                print('Error TypeError while reading media message #{} in chat #{}: {}'.format(count_messages, chats.pk_cs, msg) + "\nI guess this means that the media part of this message can't be found in the DB")
                                 curr_message = Message(msgs["Z_PK"],msgs["ZISFROMME"],None,msgs["ZMESSAGEDATE"],messagetext + "<br>MediaMessage_Error: see output in DOS window",contactfrom,msgs["ZMESSAGESTATUS"],None,None,None,None,None,None,None,None,None,None)
                             except sqlite3.Error as msg:
-                                print('Error sqlite3.Error while reading media message #{} in chat #{}: {}'.format(count_messages, chats.pk_cs, msg)) 
-                                curr_message = Message(msgs["Z_PK"],msgs["ZISFROMME"],None,msgs["ZMESSAGEDATE"],messagetext + "<br>MediaMessage_Error: see output in DOS window",contactfrom,msgs["ZMESSAGESTATUS"],None,None,None,None,None,None,None,None,None,None)                                
+                                print('Error sqlite3.Error while reading media message #{} in chat #{}: {}'.format(count_messages, chats.pk_cs, msg))
+                                curr_message = Message(msgs["Z_PK"],msgs["ZISFROMME"],None,msgs["ZMESSAGEDATE"],messagetext + "<br>MediaMessage_Error: see output in DOS window",contactfrom,msgs["ZMESSAGESTATUS"],None,None,None,None,None,None,None,None,None,None)
 
                 except sqlite3.Error as msg:
-                    print('Error while reading message #{} in chat #{}: {}'.format(count_messages, chats.pk_cs, msg)) 
+                    print('Error while reading message #{} in chat #{}: {}'.format(count_messages, chats.pk_cs, msg))
                     curr_message = Message(None,None,None,None,"_Error: sqlite3.Error, see output in DOS window",None,None,None,None,None,None,None,None,None,None,None,None)
                 except TypeError as msg:
-                    print('Error while reading message #{} in chat #{}: {}'.format(count_messages, chats.pk_cs, msg)) 
+                    print('Error while reading message #{} in chat #{}: {}'.format(count_messages, chats.pk_cs, msg))
                     curr_message = Message(None,None,None,None,"_Error: TypeError, see output in DOS window",None,None,None,None,None,None,None,None,None,None,None,None)
                 chats.msg_list.append(curr_message)
 
         except sqlite3.Error as msg:
-            print('Error sqlite3.Error while reading chat #{}: {}'.format(chats.pk_cs, msg)) 
+            print('Error sqlite3.Error while reading chat #{}: {}'.format(chats.pk_cs, msg))
             sys.exit(1)
         except TypeError as msg:
-            print('Error TypeError while reading chat #{}: {}'.format(chats.pk_cs, msg)) 
+            print('Error TypeError while reading chat #{}: {}'.format(chats.pk_cs, msg))
             sys.exit(1)
 
     # gets the db owner id
@@ -1745,7 +1763,7 @@ def main(argv):
     wfile.write('<meta name="GENERATOR" content="WhatsApp Xtract v2.3"/>\n'.encode('utf-8'))
     # adds page style
     wfile.write(css_style.encode('utf-8'))
-    
+
     # adds javascript to make the tables sortable
     wfile.write('\n<script type="text/javascript">\n'.encode('utf-8'))
     wfile.write(popups.encode('utf-8'))
@@ -1779,7 +1797,7 @@ def main(argv):
     wfile.write('<th>Last Message</th>\n'.encode('utf-8'))
     wfile.write('</tr>\n'.encode('utf-8'))
     wfile.write('</thead>\n'.encode('utf-8'))
-    
+
     # writes 1st table content
     wfile.write('<tbody>\n'.encode('utf-8'))
     for i in chat_session_list:
@@ -1840,7 +1858,7 @@ def main(argv):
                 if y.from_me == 1:
                     if y.status == 6:
                         content_type = CONTENT_NEWGROUPNAME
-                if content_type is None: 
+                if content_type is None:
                     if y.media_wa_type == "4":
                         content_type = CONTENT_VCARD
                         y.vcard_string = y.msg_text
@@ -1848,7 +1866,7 @@ def main(argv):
                     elif y.media_wa_type == "1" or y.media_wa_type == "3" or y.media_wa_type == "5":
                         if str(y.msg_text)[:3] == "/9j":
                             y.media_thumb = "data:image/jpg;base64,\n" + y.msg_text
-                        else:  
+                        else:
                             try:
                                 y.media_thumb = "data:image/jpg;base64,\n" + base64.b64encode(y.media_thumb).decode("utf-8")
                             except:
@@ -1872,7 +1890,7 @@ def main(argv):
             # IPHONE mode
             elif mode == IPHONE:
                 # prepare thumb
-                if y.media_thumb: 
+                if y.media_thumb:
                     y.media_thumb = "data:image/jpg;base64,\n" + base64.b64encode(y.media_thumb).decode("utf-8")
                 elif y.media_thumb_local_url:
                     y.media_thumb = y.media_thumb_local_url
@@ -1897,7 +1915,7 @@ def main(argv):
                             y.media_wa_type = "1"
                         #content_type = CONTENT_MEDIA_THUMB
                     else:
-                        content_type = CONTENT_MEDIA_NOTHUMB     
+                        content_type = CONTENT_MEDIA_NOTHUMB
                 # TEXT
                 elif y.msg_text is not None:
                     content_type = CONTENT_TEXT
@@ -1921,7 +1939,7 @@ def main(argv):
                         if n.contact_id == y.contact_from:
                             y.contact_from = convertsmileys ( n.contact_name )
 
-            # PK  
+            # PK
             wfile.write('<td>{}</td>\n'.format(y.pk_msg).encode('utf-8'))
 
             # Chat name
@@ -1930,24 +1948,24 @@ def main(argv):
             wfile.write('<td>{}</td>\n'.format(str(y.msg_date).replace(" ","&nbsp;")).encode('utf-8'))
             # From
             wfile.write('<td class="contact">{}</td>\n'.format(y.contact_from).encode('utf-8'))
-            
-            # date elaboration for further use     
+
+            # date elaboration for further use
             date = str(y.msg_date)[:10]
             if date != 'N/A' and date != 'N/A error':
                 date = int(date.replace("-",""))
 
             # Display Msg content (Text/Media)
-            
-            try:              
+
+            try:
                 if content_type == CONTENT_IMAGE:
-                    #Search for offline file with current date (+3 days) and known media size                   
+                    #Search for offline file with current date (+3 days) and known media size
                     linkimage = findfile ("IMG", y.media_size, y.local_url, date, 3)
                     try:
                         wfile.write('<td class="text"><a onclick="image(this.href);return(false);" target="image" href="{}"><img src="{}" alt="Image"/></a>&nbsp;|&nbsp;<a onclick="image(this.href);return(false);" target="image" href="{}">Image</a>'.format(linkimage, y.media_thumb, y.media_url).encode('utf-8'))
                     except:
                         wfile.write('<td class="text">Image N/A'.encode('utf-8'))
                 elif content_type == CONTENT_AUDIO:
-                    #Search for offline file with current date (+3 days) and known media size                    
+                    #Search for offline file with current date (+3 days) and known media size
                     linkaudio = findfile ("AUD", y.media_size, y.local_url, date, 3)
                     try:
                         wfile.write('<td class="text"><a onclick="media(this.href);return(false);" target="media" href="{}">Audio (offline)</a>&nbsp;|&nbsp;<a onclick="media(this.href);return(false);" target="media" href="{}">Audio (online)</a>'.format(linkaudio, y.media_url).encode('utf-8'))
@@ -1961,19 +1979,19 @@ def main(argv):
                     except:
                         wfile.write('<td class="text">Video N/A'.encode('utf-8'))
                 elif content_type == CONTENT_MEDIA_THUMB:
-                    #Search for offline file with current date (+3 days) and known media size                   
+                    #Search for offline file with current date (+3 days) and known media size
                     linkmedia = findfile ("MEDIA_THUMB", y.media_size, y.local_url, date, 3)
                     try:
                         wfile.write('<td class="text"><a onclick="image(this.href);return(false);" target="image" href="{}"><img src="{}" alt="Media"/></a>&nbsp;|&nbsp;<a onclick="image(this.href);return(false);" target="image" href="{}">Media</a>'.format(linkmedia, y.media_thumb, y.media_url).encode('utf-8'))
                     except:
                         wfile.write('<td class="text">Media N/A'.encode('utf-8'))
                 elif content_type == CONTENT_MEDIA_NOTHUMB:
-                    #Search for offline file with current date (+3 days) and known media size                    
+                    #Search for offline file with current date (+3 days) and known media size
                     linkmedia = findfile ("MEDIA_NOTHUMB", y.media_size, y.local_url, date, 3)
                     try:
                         wfile.write('<td class="text"><a onclick="media(this.href);return(false);" target="media" href="{}">Media (online)</a>&nbsp;|&nbsp;<a onclick="media(this.href);return(false);" target="media" href="{}">Media (online)</a>'.format(linkmedia, y.media_url).encode('utf-8'))
                     except:
-                        wfile.write('<td class="text">Media N/A'.encode('utf-8'))  
+                        wfile.write('<td class="text">Media N/A'.encode('utf-8'))
                 elif content_type == CONTENT_VCARD:
                     if y.vcard_name == "" or y.vcard_name is None:
                         vcardintro = ""
@@ -2002,7 +2020,7 @@ def main(argv):
                 elif content_type != CONTENT_TEXT:
                     content_type = CONTENT_OTHER
                 # End of If-Clause, now text or other type of content:
-                if content_type == CONTENT_TEXT or content_type == CONTENT_OTHER:         
+                if content_type == CONTENT_TEXT or content_type == CONTENT_OTHER:
                     msgtext = convertsmileys ( y.msg_text )
                     msgtext = re.sub(r'(http[^\s\n\r]+)', r'<a onclick="image(this.href);return(false);" target="image" href="\1">\1</a>', msgtext)
                     msgtext = re.sub(r'((?<!\S)www\.[^\s\n\r]+)', r'<a onclick="image(this.href);return(false);" target="image" href="http://\1">\1</a>', msgtext)
@@ -2016,7 +2034,7 @@ def main(argv):
                 wfile.write('<td class="text">N/A (error in message)'.encode('utf-8'))
             # wfile.write(str(content_type)) #Debug
             wfile.write('</td>\n'.encode('utf-8'))
-            
+
             # Msg status
             wfile.write('<td>{}</td>\n'.format(y.status).encode('utf-8'))
 
@@ -2026,26 +2044,26 @@ def main(argv):
             # Media size
             wfile.write('<td>{}</td>\n'.format(y.media_size).encode('utf-8'))
             wfile.write('</tr>\n'.encode('utf-8'))
-            
-        wfile.write('</tbody>\n'.encode('utf-8'))       
+
+        wfile.write('</tbody>\n'.encode('utf-8'))
         # writes 1st table footer
         wfile.write('</table>\n'.encode('utf-8'))
 
-    # writes page footer        
+    # writes page footer
     wfile.write('</body></html>\n'.encode('utf-8'))
     wfile.close()
     print ("done!")
 
-    #END 
-    webbrowser.open(outfile)            
- 
+    #END
+    webbrowser.open(outfile)
+
 
 ##### GLOBAL variables #####
 
 PYTHON_VERSION = None
 testtext = ""
 testtext = testtext.replace('\ue40e', 'v3')
-if testtext == "v3":    
+if testtext == "v3":
     PYTHON_VERSION = 3
     print ("Python Version 3.x")
 else:
@@ -2196,7 +2214,7 @@ function ts_makeSortable(t) {
         }
     }
     if (!firstRow) return;
-    
+
     // We have a first row: assume it's the header, and make its contents clickable links
     for (var i=0;i<firstRow.cells.length;i++) {
         var cell = firstRow.cells[i];
@@ -2215,7 +2233,7 @@ function ts_getInnerText(el) {
     if (typeof el == "undefined") { return el };
     if (el.innerText) return el.innerText;    //Not needed but it is faster
     var str = "";
-    
+
     var cs = el.childNodes;
     var l = cs.length;
     for (var i = 0; i < l; i++) {
@@ -2252,7 +2270,7 @@ function ts_resortTable(lnk, clid) {
         }
         i++;
     }
-    if (itm == "") return; 
+    if (itm == "") return;
     sortfn = ts_sort_caseinsensitive;
     if (itm.match(/^\d\d[\/\.-][a-zA-z][a-zA-Z][a-zA-Z][\/\.-]\d\d\d\d$/)) sortfn = ts_sort_date;
     if (itm.match(/^\d\d[\/\.-]\d\d[\/\.-]\d\d\d{2}?$/)) sortfn = ts_sort_date;
@@ -2262,19 +2280,19 @@ function ts_resortTable(lnk, clid) {
     var firstRow = new Array();
     var newRows = new Array();
     for (k=0;k<t.tBodies.length;k++) {
-        for (i=0;i<t.tBodies[k].rows[0].length;i++) { 
-            firstRow[i] = t.tBodies[k].rows[0][i]; 
+        for (i=0;i<t.tBodies[k].rows[0].length;i++) {
+            firstRow[i] = t.tBodies[k].rows[0][i];
         }
     }
     for (k=0;k<t.tBodies.length;k++) {
         if (!thead) {
             // Skip the first row
-            for (j=1;j<t.tBodies[k].rows.length;j++) { 
+            for (j=1;j<t.tBodies[k].rows.length;j++) {
                 newRows[j-1] = t.tBodies[k].rows[j];
             }
         } else {
             // Do NOT skip the first row
-            for (j=0;j<t.tBodies[k].rows.length;j++) { 
+            for (j=0;j<t.tBodies[k].rows.length;j++) {
                 newRows[j] = t.tBodies[k].rows[j];
             }
         }
@@ -2287,17 +2305,17 @@ function ts_resortTable(lnk, clid) {
     } else {
             ARROW = '&nbsp;&nbsp;<img src="'+ image_path + image_up + '" alt="&uarr;"/>';
             span.setAttribute('sortdir','down');
-    } 
+    }
     // We appendChild rows that already exist to the tbody, so it moves them rather than creating new ones
     // don't do sortbottom rows
-    for (i=0; i<newRows.length; i++) { 
+    for (i=0; i<newRows.length; i++) {
         if (!newRows[i].className || (newRows[i].className && (newRows[i].className.indexOf('sortbottom') == -1))) {
             t.tBodies[0].appendChild(newRows[i]);
         }
     }
     // do sortbottom rows only
     for (i=0; i<newRows.length; i++) {
-        if (newRows[i].className && (newRows[i].className.indexOf('sortbottom') != -1)) 
+        if (newRows[i].className && (newRows[i].className.indexOf('sortbottom') != -1))
             t.tBodies[0].appendChild(newRows[i]);
     }
     // Delete any other arrows there may be showing
@@ -2308,7 +2326,7 @@ function ts_resortTable(lnk, clid) {
                 allspans[ci].innerHTML = '&nbsp;&nbsp;<img src="'+ image_path + image_none + '" alt="&darr;"/>';
             }
         }
-    }        
+    }
     span.innerHTML = ARROW;
     alternate(t);
 }
@@ -2323,7 +2341,7 @@ function getParent(el, pTagName) {
     }
 }
 
-function sort_date(date) {    
+function sort_date(date) {
     // y2k notes: two digit years less than 50 are treated as 20XX, greater than 50 are treated as 19XX
     dt = "00000000";
     if (date.length == 11) {
@@ -2356,10 +2374,10 @@ function sort_date(date) {
         }
     } else if (date.length == 8) {
         yr = date.substr(6,2);
-        if (parseInt(yr) < 50) { 
-            yr = '20'+yr; 
-        } else { 
-            yr = '19'+yr; 
+        if (parseInt(yr) < 50) {
+            yr = '20'+yr;
+        } else {
+            yr = '19'+yr;
         }
         if (europeandate == true) {
             dt = yr+date.substr(3,2)+date.substr(0,2);
@@ -2375,11 +2393,11 @@ function sort_date(date) {
 function ts_sort_date(a,b) {
     dt1 = sort_date(ts_getInnerText(a.cells[SORT_COLUMN_INDEX]));
     dt2 = sort_date(ts_getInnerText(b.cells[SORT_COLUMN_INDEX]));
-    
+
     if (dt1==dt2) {
         return 0;
     }
-    if (dt1<dt2) { 
+    if (dt1<dt2) {
         return -1;
     }
     return 1;
@@ -2469,7 +2487,7 @@ function alternate(table) {
                         tableRows[j].className += " odd";
                     }
                 }
-            } 
+            }
         }
     }
 }
